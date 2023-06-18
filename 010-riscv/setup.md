@@ -100,7 +100,9 @@ xorg-server
 zlib-dev
 ```
 ## SETUP ENV
-apk add makeinfo bison flex zlib-dev
+apk add makeinfo bison flex zlib-dev qemu-riscv64 qemu-openrc
+rc-service qemu-binfmt start
+rc-update add qemu-binfmt default
 
 #####riscv-gnu-toolchain
 mkdir /opt/riscv
