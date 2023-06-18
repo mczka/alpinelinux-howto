@@ -214,6 +214,25 @@ umount /mnt/boot
 
 #####################################################################################################
 # disk again from AL script
+doas su -
+./build-image.sh
+exit
+chown $user:$user .img
+
+#recompile u-boot
+make menuconfig
+#enviroment ->
+# ENV_IS_IN_EXT4
+# NVME
+# NVME PCI
+# ENV_EXT4_INTERFACE="nvme-blk"
+# ENV_EXT4_DEVICE_AND_PART="0:1"
+make -j4
+#recompile opensbi
+cd ../opensbi
+make PLATFORM=generic FW_PAYLOAD_PATH=$HOME/riscv/u-boot/u-boot.bin
+./run-qemu.sh
+...
 TBC
 
 
