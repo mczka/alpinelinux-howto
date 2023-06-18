@@ -219,6 +219,15 @@ doas su -
 exit
 chown $user:$user .img
 
+cat run-qemu.sh 
+#!/bin/bash
+
+qemu-system-riscv64 -nographic -M virt -m 8G -smp 8 \
+-bios $HOME/riscv/opensbi/build/platform/generic/firmware/fw_payload.elf \
+-device nvme,serial=QEMUNVME00001,drive=nvme0 \
+-drive file=$HOME/riscv/qemu-20230618.img,format=raw,if=none,id=nvme0
+
+
 #recompile u-boot
 make menuconfig
 #enviroment ->
@@ -232,6 +241,8 @@ make -j4
 cd ../opensbi
 make PLATFORM=generic FW_PAYLOAD_PATH=$HOME/riscv/u-boot/u-boot.bin
 ./run-qemu.sh
+=> nvme info
+=> ext4ls nvme 0:1
 ...
 TBC
 
