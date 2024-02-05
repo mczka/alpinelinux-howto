@@ -9,10 +9,15 @@ RUN git clone --branch 0.11.2 https://github.com/vagrant-libvirt/vagrant-libvirt
 ENV PATH="$PATH:/build/vagrant-libvirt/exec"
 
 git clone --branch 0.11.2 https://github.com/vagrant-libvirt/vagrant-libvirt.git
-export VAGRANT_VERSION="v2.3.4"
+
 doas apk add ruby-bundler ruby-dev libvirt-dev libarchive-tools kmod openssh-client-default
+
 doas echo -e "max_client_requests = 5\n" >> tee /etc/libvirt/libvirtd.conf
+
 cd vagrant-libvirt
+
 doas bundle install
+
 doas bundle --binstubs exec
+
 export PATH="$PATH:/home/username/vagrant-libvirt/exec"
