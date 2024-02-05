@@ -21,3 +21,11 @@ doas bundle install
 doas bundle --binstubs exec
 
 export PATH="$PATH:/home/username/vagrant-libvirt/exec"
+
+bundle exec vagrant init debian/bookworm64
+
+bundle exec vagrant up --provider=libvirt
+
+export VAGRANT_DEFAULT_PROVIDER=libvirt
+
+# vagrant up --provider=libvirt
