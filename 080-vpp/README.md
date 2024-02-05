@@ -6,9 +6,9 @@
 
 USERNAME=user
 
-apk add alpine-sdk bash bash-completion coreutils utmps gawk grep sed 
+apk add alpine-sdk bash bash-completion coreutils utmps gawk grep sed tar
 
-apk add findutils util-linux util-linux-misc
+apk add findutils util-linux util-linux-misc procps-ng gmp libtool texinfo
 
 apk add mandoc mandoc-apropos mandoc-doc man-pages
 
