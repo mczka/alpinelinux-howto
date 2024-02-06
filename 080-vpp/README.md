@@ -40,7 +40,7 @@ apk add docs
 ## /etc/fstab
 ## nodev /mnt/huge hugetlbfs pagesize=1GB 0 0
 
-cat > /etc/modules >> EOF
+cat > /etc/modules << EOF
 af_packet
 ipv6
 tun
