@@ -59,7 +59,11 @@ reboot
 
 git clone https://gerrit.fd.io/r/vpp; cd vpp
 
-wget https://github.com/alpinelinux/aports/blob/master/community/dpdk/lfs64.patch
+wget https://raw.githubusercontent.com/mczka/alpinelinux-howto/main/080-vpp/0001-alpinelinux-dpdk-v23.11-patch.patch
+
+mkdir -p build/external/patches/dpdk_23.11/
+
+cp 0001-alpinelinux-dpdk-v23.11-patch.patch build/external/patches/dpdk_23.11/0001-alpinelinux-dpdk-v23.11-patch.patch
 
 export SUDO=doas
 
