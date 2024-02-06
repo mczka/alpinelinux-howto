@@ -12,7 +12,7 @@ apk add findutils util-linux util-linux-misc procps-ng gmp libtool texinfo chrpa
 
 apk add mandoc mandoc-apropos mandoc-doc man-pages
 
-apk add bsd-compat-headers linux-headers iproute2 ethtool
+apk add bsd-compat-headers linux-headers iproute2 ethtool pciutils
 
 add add python3 python3-dev py3-pip py3-elftools py3-virtualenv py3-ply py3-jsonschema
 
@@ -52,6 +52,7 @@ vfio_iommu_type1
 vfio_virqfd
 vhost_net
 macvtap
+uio_pci_generic
 EOF
 
 reboot
