@@ -24,7 +24,7 @@ apk add rdma-core rdma-core-dev zlib-dev libffi libffi-dev subunit subunit-dev
 
 apk add apr-dev check check-dev xmlto indent 
 
-apk add make automake autoconf nasm meson ccache cmake clang14 llvm14 
+apk add make automake autoconf nasm meson ccache cmake clang14 llvm14 git-review keychain
 
 apk add strace gdb tshark iperf3
 
