@@ -34,11 +34,15 @@ adduser $USERNAME abuild
 
 apk add docs
 
+mkdir -p /mnt/huge
 
-## default_hugepagesz=1G hugepagesz=1G hugepages=4
-##
-## /etc/fstab
-## nodev /mnt/huge hugetlbfs pagesize=1GB 0 0
+vi /etc/default/grub
+
+iommu=pt default_hugepagesz=1G hugepagesz=1G hugepages=2 transparent_hugepage=never"
+
+grub-mkconfig -o /boot/grub/grub.cfg
+
+echo "nodev /mnt/huge hugetlbfs pagesize=1GB 0 0" >> /etc/fstab
 
 cat > /etc/modules << EOF
 af_packet
@@ -72,6 +76,12 @@ export CROSS_COMPILE=x86_64-alpine-linux-musl-
 doas ln -s $(which clang-14) /usr/bin/clang
 
 doas ln -s $(which llc14) /usr/bin/llc
+
+
+sed -i 's/-linux-gnu/-alpine-linux-musl/' ./configure
+
+sed -i 's/-linux-gnu/-alpine-linux-musl/' ./src/CMakeLists.txt
+
 
 make wipe-all
 
