@@ -14,7 +14,7 @@ apk add mandoc mandoc-apropos mandoc-doc man-pages
 
 apk add bsd-compat-headers linux-headers iproute2 ethtool pciutils
 
-add add python3 python3-dev py3-pip py3-elftools py3-virtualenv py3-ply py3-jsonschema
+apk add python3 python3-dev py3-pip py3-elftools py3-virtualenv py3-ply py3-jsonschema
 
 apk add numactl numactl-dev libbpf libbpf-dev libxdp libxdp-dev libpcap libpcap-dev
 
