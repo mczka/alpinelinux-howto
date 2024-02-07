@@ -16,6 +16,8 @@ apk add bsd-compat-headers linux-headers iproute2 ethtool pciutils
 
 apk add python3 python3-dev py3-pip py3-elftools py3-virtualenv py3-ply py3-jsonschema
 
+apk add py3-docutils eudev-dev libdrm-dev libnl3-dev dtc-dev isa-l-dev jansson-dev 
+
 apk add numactl numactl-dev libbpf libbpf-dev libxdp libxdp-dev libpcap libpcap-dev
 
 apk add openssl-dev libarchive libarchive-dev libnl3 libnl3-dev libmnl libmnl-dev
