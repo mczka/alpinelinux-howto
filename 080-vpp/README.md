@@ -63,6 +63,8 @@ reboot
 
 git clone https://gerrit.fd.io/r/vpp; cd vpp
 
+\ # git clone -b v24.02-rc1 https://gerrit.fd.io/r/vpp vpp-24.02; cd vpp-24.02
+
 wget https://raw.githubusercontent.com/mczka/alpinelinux-howto/main/080-vpp/0001-alpinelinux-dpdk-v23.11-patch.patch
 
 mkdir -p build/external/patches/dpdk_23.11/
