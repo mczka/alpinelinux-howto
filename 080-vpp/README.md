@@ -85,10 +85,12 @@ sed -i 's/-linux-gnu/-alpine-linux-musl/' ./configure
 sed -i 's/-linux-gnu/-alpine-linux-musl/' ./src/CMakeLists.txt
 
 
-make wipe-all
+make wipe
 
 make build
 
-make wipe-all
+...
+
+make wipe-release
 
 make build-release
