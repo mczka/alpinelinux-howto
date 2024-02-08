@@ -4,8 +4,6 @@
 
 \# user wheel doas 'permit nopass :wheel'
 
-USERNAME=user
-
 apk add alpine-sdk bash bash-completion coreutils utmps gawk grep sed tar bison
 
 apk add findutils util-linux util-linux-misc procps-ng gmp libtool texinfo chrpath
@@ -32,7 +30,7 @@ apk add strace gdb tshark iperf3
 
 setup-utmp
 
-adduser $USERNAME abuild
+adduser $USER abuild
 
 apk add docs
 
