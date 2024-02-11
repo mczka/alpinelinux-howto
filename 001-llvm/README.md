@@ -10,7 +10,52 @@ apk add libdrm libdrm-dev libdrm-tests elfutils elfutils-dev
 
 setup-utmp
 
+export ROCM_PATH=$HOME/prefix
+
+export HIP_PATH=$HOME/prefix/hip
+
+export LLVM_PATH=$HOME/prefix/llvm
+
 mkdir -p $HOME/prefix
+
+mkdir -p $HOME/llvm-project
+
+mkdir -p $HOME/prefix/device-libs
+
+LLVM_PROJECT=$HOME/llvm-project
+
+git clone https://github.com/ROCm/llvm-project.git $HOME/llvm-project
+
+DEVICE_LIBS=$HOME/prefix/device-libs
+
+COMGR=$HOME/prefix/lib/comgr
+
+mkdir -p "$LLVM_PROJECT/build"
+
+cd "$LLVM_PROJECT/build"
+
+cmake -DCMAKE_BUILD_TYPE=Release -DLLVM_ENABLE_PROJECTS="llvm;clang;lld" -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86" ../llvm
+
+make
+
+mkdir -p "$DEVICE_LIBS/build"; cd "$DEVICE_LIBS/build"
+
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$LLVM_PROJECT/build" ..
+
+make
+
+mkdir -p "$COMGR/build"; cd "$COMGR/build"
+
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$LLVM_PROJECT/build;$DEVICE_LIBS/build" ..
+
+make
+
+make test
+
+
+
+
+
 
 \# step 2:
 
