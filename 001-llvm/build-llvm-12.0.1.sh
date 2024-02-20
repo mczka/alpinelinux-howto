@@ -1,6 +1,6 @@
 #!/bin/bash
 
-curl -L https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1/llvm-12.0.1.src.tar.xz | tar -xJ
+curl -L https://github.com/llvm/llvm-project/releases/download/llvmorg-12.0.1/llvm-project-12.0.1.src.tar.xz | tar -xJ
 cd llvm-project-12.0.1.src
 cmake -G "Unix Makefiles" -S llvm -B build -DCMAKE_BUILD_TYPE="Release" \
                                 -DCMAKE_INSTALL_PREFIX="$(pwd)/../llvm-project-12.0.1" \
