@@ -1,0 +1,115 @@
+handle SIGUSR1 nostop noprint pass
+set print pretty on
+
+define pvec
+  print *$arg0@vl($arg0)
+end
+document pvec
+  pvec - display all elements of vector. Takes vector as argument
+  *** WARNING - SEGV likely if you put in the wrong thing
+end
+
+
+define dnr
+  set $nodereg = $arg0
+  set $nodereg_total=0
+  while ($nodereg != 0)
+    if $argc == 1
+      echo \n
+      output $nodereg[0]->name
+      echo \t
+      output $nodereg[0]->type
+    end
+    set $nodereg = $nodereg->next_registration
+    set $nodereg_total = $nodereg_total + 1
+  end
+  echo \n
+  echo Total: 
+  output $nodereg_total
+  echo \n
+end
+
+document dnr
+    Dump Node Registration linked list
+
+    Usage:
+    dnr <addr of vlib_node_registration_t> [total] 
+       - dumps all nodes in registration list with name and type. Gives total# node registrations.
+    ie
+    dnr vm->node_main->node_registrations
+    Will print each nodes name and type from the node_registrations linked list with a 
+    total at the bottom
+
+    dnr vm->node_main->node_registrations total
+    Only prints total
+
+    *** WARNING: this is linked list traversal. Can take a couple of seconds to complete.
+end
+
+
+define wnm
+  echo \n nodes:   
+  output vl($arg0->  nodes)
+
+  set $total_type=0
+  set $total_types=0
+  echo \n\n nodes_by_type
+  set $total_type = vl($arg0->  nodes_by_type[0])
+  echo \n INTERNAL:    
+  output $total_type
+  set $total_types = $total_types + $total_type
+
+  set $total_type = vl($arg0->  nodes_by_type[1])
+  echo \n INPUT:    
+  output $total_type
+  set $total_types = $total_types + $total_type
+
+  set $total_type = vl($arg0->  nodes_by_type[2])
+  echo \n  PRE_INPUT:    
+  output $total_type
+  set $total_types = $total_types + $total_type
+
+  set $total_type = vl($arg0->  nodes_by_type[3])
+  echo \n  PROCESS:   
+  output $total_type
+  set $total_types = $total_types + $total_type
+  echo \n Total nodes by type:    
+  output $total_types
+  echo \n
+  echo \n Total node_registrations:
+  dnr $arg0->node_registrations total
+  echo \n
+end
+
+document wnm
+  Watch Node Main - outputs information about node counts for structures in 
+    vlib_node_main_t
+
+  Can use address of (vlib_main_t)->node_main to convenience var.
+
+  wnm <addr of vlib_node_main_t>
+
+  set $my_nm = &vm->node_main
+  wnm $my_nm
+
+(gdb) set $my_nm = &vm->node_main
+(gdb) output $my_nm
+(gdb) p $my_nm
+$1 = (vlib_node_main_t *) 0xb3bb98 <vlib_global_main+280>
+(gdb) wnm $my_nm
+
+ nodes:0
+
+ nodes_by_type
+ INTERNAL:0
+ INPUT:0
+  PRE_INPUT:0
+  PROCESS:0
+ Total nodes by type:0
+
+ Total node_registrations:
+Total:168
+
+*** WARNING: uses user-defined command "dnr" which is a linked list traversal and can take a few seconds to complete
+
+end
