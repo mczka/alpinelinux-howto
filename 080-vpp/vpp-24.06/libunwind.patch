@@ -1,0 +1,53 @@
+From f5df854389b8f2f2602d2aac8fec33fefdc45e59 Mon Sep 17 00:00:00 2001
+From: Guillaume Solignac <gsoligna@cisco.com>
+Date: Thu, 23 May 2024 11:59:53 +0200
+Subject: [PATCH] vppinfra: support libunwind for backtrace
+
+On non-glibc systems, execinfo is the only option available, but the lib
+is old and can crash when unwinding. We now can use libunwind to unroll
+it instead of using execinfo.h.
+
+Type: improvement
+Signed-off-by: Guillaume Solignac <gsoligna@cisco.com>
+Change-Id: I8b55f7aca97261a2efb5dca998889d5e0645939a
+
+diff --git a/src/vppinfra/CMakeLists.txt b/src/vppinfra/CMakeLists.txt
+index 154e3a77c..a8c64a361 100644
+--- a/vppinfra/CMakeLists.txt
++++ b/vppinfra/CMakeLists.txt
+@@ -234,9 +234,13 @@ if("${CMAKE_SYSTEM_NAME}" STREQUAL "FreeBSD")
+ else()
+   option(VPP_USE_EXTERNAL_LIBEXECINFO "Use external libexecinfo (useful for non-glibc targets)." OFF)
+ endif()
++option(VPP_USE_LIBUNWIND "Use libunwind for backtrace." OFF)
+ 
+ if(VPP_USE_EXTERNAL_LIBEXECINFO)
+   set(EXECINFO_LIB execinfo)
++elseif(VPP_USE_LIBUNWIND)
++  set(EXECINFO_LIB unwind)
++  add_compile_definitions(USE_LIBUNWIND)
+ endif()
+ add_vpp_library(vppinfra
+   SOURCES ${VPPINFRA_SRCS}
+diff --git a/src/vppinfra/backtrace.c b/src/vppinfra/backtrace.c
+index e713bae68..bae563d04 100644
+--- a/vppinfra/backtrace.c
++++ b/vppinfra/backtrace.c
+@@ -219,8 +219,17 @@ backtrace_done:
+ #ifndef clib_backtrace_defined
+ #define clib_backtrace_defined
+ 
++#ifndef USE_LIBUNWIND
+ /* use glibc backtrace for stack trace */
+ #include <execinfo.h>
++#else
++#include <libunwind.h>
++static int
++backtrace (void **buffer, int size)
++{
++  return unw_backtrace (buffer, size);
++}
++#endif
+ 
+ __clib_export uword
+ clib_backtrace (uword * callers, uword max_callers, uword n_frames_to_skip)
