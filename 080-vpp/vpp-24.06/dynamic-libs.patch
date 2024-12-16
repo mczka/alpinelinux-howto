@@ -1,0 +1,37 @@
+--- a/plugins/srtp/CMakeLists.txt
++++ b/plugins/srtp/CMakeLists.txt
+@@ -11,7 +11,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-vpp_plugin_find_library(srtp SRTP_LIB libsrtp2.a)
++vpp_plugin_find_library(srtp SRTP_LIB srtp2)
+ vpp_find_path(SRTP_INCLUDE_DIR NAMES srtp2/srtp.h)
+ 
+ if (NOT SRTP_INCLUDE_DIR)
+--- a/plugins/af_xdp/aCMakeLists.txt
++++ b/plugins/af_xdp/CMakeLists.txt
+@@ -18,8 +18,8 @@
+ endif()
+ 
+ set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS TRUE)
+-vpp_plugin_find_library(af_xdp XDP_LIB libxdp.a)
+-vpp_plugin_find_library(af_xdp BPF_LIB libbpf.a)
++vpp_plugin_find_library(af_xdp XDP_LIB xdp)
++vpp_plugin_find_library(af_xdp BPF_LIB bpf)
+ vpp_plugin_find_library(af_xdp ELF_LIB elf)
+ vpp_plugin_find_library(af_xdp Z_LIB z)
+ if (NOT XDP_LIB OR NOT BPF_LIB OR NOT ELF_LIB OR NOT Z_LIB)
+--- a/plugins/rdma/CMakeLists.txt
++++ b/plugins/rdma/CMakeLists.txt
+@@ -18,8 +18,8 @@
+   return()
+ endif()
+ 
+-vpp_plugin_find_library(rdma IBVERBS_LIB libibverbs.a)
+-vpp_plugin_find_library(rdma MLX5_LIB libmlx5.a)
++vpp_plugin_find_library(rdma IBVERBS_LIB ibverbs)
++vpp_plugin_find_library(rdma MLX5_LIB mlx5)
+ 
+ if (NOT IBVERBS_LIB OR NOT MLX5_LIB)
+   message(WARNING "rdma plugin - ibverbs not found - rdma plugin disabled")
