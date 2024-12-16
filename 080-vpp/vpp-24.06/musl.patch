@@ -1,0 +1,88 @@
+--- a/vcl/ldp.c
++++ b/vcl/ldp.c
+@@ -57,10 +57,10 @@
+ 
+ #define LDP_MAX_NWORKERS 32
+ 
+-#ifdef HAVE_GNU_SOURCE
++#ifdef __GLIBC__
+ #define SOCKADDR_GET_SA(__addr) __addr.__sockaddr__;
+ #else
+-#define SOCKADDR_GET_SA(__addr) _addr;
++#define SOCKADDR_GET_SA(__addr) __addr;
+ #endif
+ 
+ #ifndef UDP_SEGMENT
+@@ -595,7 +595,7 @@ fcntl64 (int fd, int cmd, ...)
+ }
+ 
+ int
+-ioctl (int fd, unsigned long int cmd, ...)
++ioctl (int fd, int cmd, ...)
+ {
+   vls_handle_t vlsh;
+   va_list ap;
+@@ -1181,7 +1181,7 @@ ldp_copy_ep_to_sockaddr (struct sockaddr *addr, socklen_t *__restrict len,
+ 	  copy_len = *len - sa_len;
+ 	  if (copy_len > 0)
+ 	    memcpy (((struct sockaddr_in6 *) addr)->sin6_addr.
+-		    __in6_u.__u6_addr8, ep->ip, copy_len);
++		    __in6_union.__s6_addr, ep->ip, copy_len);
+ 	  break;
+ 
+ 	default:
+@@ -1834,7 +1834,7 @@ sendmsg (int fd, const struct msghdr * msg, int flags)
+ 
+ #ifdef _GNU_SOURCE
+ int
+-sendmmsg (int fd, struct mmsghdr *vmessages, unsigned int vlen, int flags)
++sendmmsg (int fd, struct mmsghdr *vmessages, unsigned int vlen, unsigned int flags)
+ {
+   ssize_t size;
+   const char *func_str;
+@@ -1937,7 +1937,7 @@ recvmsg (int fd, struct msghdr * msg, int flags)
+ #ifdef _GNU_SOURCE
+ int
+ recvmmsg (int fd, struct mmsghdr *vmessages,
+-	  unsigned int vlen, int flags, struct timespec *tmo)
++	  unsigned int vlen, unsigned int flags, struct timespec *tmo)
+ {
+   ldp_worker_ctx_t *ldpw = ldp_worker_get_current ();
+   u32 sh;
+--- a/vcl/ldp_glibc_socket.h
++++ b/vcl/ldp_glibc_socket.h
+@@ -27,6 +27,15 @@
+ #include <signal.h>
+ #include <poll.h>
+ 
++#ifndef __GLIBC__
++#define __SOCKADDR_ARG struct sockaddr *__restrict
++#define __CONST_SOCKADDR_ARG __const struct sockaddr *
++#define __sigset_t sigset_t
++#define __THROW __attribute__ ((__nothrow__))
++#define __wur
++#define __USE_XOPEN2K
++#endif
++
+ /*
+  *
+  * Generic glibc fd api
+@@ -207,7 +216,7 @@ sendmsg (int __fd, const struct msghdr *__message, int __flags);
+    This function is a cancellation point and therefore not marked with
+    __THROW.  */
+ extern int sendmmsg (int __fd, struct mmsghdr *__vmessages,
+-		     unsigned int __vlen, int __flags);
++		     unsigned int __vlen, unsigned int __flags);
+ #endif
+ 
+ /* Receive a message as described by MESSAGE from socket FD.
+@@ -225,7 +234,7 @@ extern ssize_t recvmsg (int __fd, struct msghdr *__message, int __flags);
+    __THROW.  */
+ extern int
+ recvmmsg (int __fd, struct mmsghdr *__vmessages,
+-	  unsigned int __vlen, int __flags, struct timespec *__tmo);
++	  unsigned int __vlen, unsigned int __flags, struct timespec *__tmo);
+ #endif
+ 
+
+ 
