@@ -1,0 +1,35 @@
+From 7f3c21763f7a977037208aa603f706782b92c73c Mon Sep 17 00:00:00 2001
+From: Renato Botelho do Couto <renato@netgate.com>
+Date: Fri, 21 Jun 2024 14:00:10 +0000
+Subject: [PATCH] vppinfra: Improve code portability
+
+Use standard macros CPU_ISSET_S and CPU_ZERO_S and make code more
+portable.
+
+Type: improvement
+
+Change-Id: I8e6a0fd79b90de8c6c33cad8882680eae2ca50ef
+Signed-off-by: Renato Botelho do Couto <renato@netgate.com>
+
+diff --git a/src/vppinfra/unix-misc.c b/src/vppinfra/unix-misc.c
+index af48e99eb..88a56d88a 100644
+--- a/vppinfra/unix-misc.c
++++ b/vppinfra/unix-misc.c
+@@ -291,7 +291,7 @@ os_get_cpu_affinity_bitmap (int pid)
+   clib_bitmap_alloc (affinity_cpus, sizeof (cpu_set_t));
+   clib_bitmap_zero (affinity_cpus);
+ 
+-  __CPU_ZERO_S (sizeof (cpu_set_t), &cpuset);
++  CPU_ZERO_S (sizeof (cpu_set_t), &cpuset);
+ 
+   ret = sched_getaffinity (0, sizeof (cpu_set_t), &cpuset);
+ 
+@@ -302,7 +302,7 @@ os_get_cpu_affinity_bitmap (int pid)
+     }
+ 
+   for (index = 0; index < sizeof (cpu_set_t); index++)
+-    if (__CPU_ISSET_S (index, sizeof (cpu_set_t), &cpuset))
++    if (CPU_ISSET_S (index, sizeof (cpu_set_t), &cpuset))
+       clib_bitmap_set (affinity_cpus, index, 1);
+   return affinity_cpus;
+ #elif defined(__FreeBSD__)
