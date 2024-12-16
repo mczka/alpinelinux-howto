@@ -1,0 +1,72 @@
+# Contributor: Sertonix <sertonix@posteo.net>
+# Maintainer: 
+pkgname=vpp
+pkgver=24.06
+pkgrel=0
+pkgdesc="Open source version of Cisco's Vector Packet Processing"
+url="https://fd.io/"
+arch="x86_64 aarch64" # Only arches supported by upstream
+license="Apache-2.0"
+#	TODO dpdk-dev (vpp uses older version)
+makedepends="
+	bash
+	bsd-compat-headers
+	check-dev
+	cmake
+	daq-dev
+	libmnl-dev
+	libnl3-dev
+	libpcap-dev
+	libsrtp-dev
+	libunwind-dev
+	libxdp-dev
+	mbedtls2-dev
+	openssl-dev
+	python3
+	py3-ply
+	rdma-core-dev
+	samurai
+	subunit-dev
+	"
+# TODO better source of tarball
+source="$pkgname-$pkgver.tar.gz::https://gerrit.fd.io/r/gitweb?p=vpp.git;a=snapshot;h=refs/tags/v$pkgver;sf=tgz
+	code-portability.patch
+	dynamic-libs.patch
+	libunwind.patch
+	maybe-uninitialized.patch
+	musl.patch
+	"
+builddir="$srcdir/vpp-v$pkgver/src"
+# Tests are complicated to run
+options="!check"
+
+prepare() {
+	default_prepare
+	echo "$pkgver-0" > scripts/.version
+}
+
+build() {
+	cmake -B build -G Ninja \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=lib \
+		-DBUILD_SHARED_LIBS=ON \
+		-DCMAKE_BUILD_TYPE=None \
+		-DVPP_USE_CCACHE="$([ -n "$USE_CCACHE" ] && echo ON || echo OFF)" \
+		-DVPP_USE_LIBUNWIND=ON \
+		-DVPP_SET_RPATH=OFF
+#		-DVPP_USE_SYSTEM_DPDK=ON
+	cmake --build build
+}
+
+package() {
+	DESTDIR="$pkgdir" cmake --install build
+}
+
+sha512sums="
+07bb200faa17d3c4b990847f6d1fd275b2dd964ea9bc0ca50f2501d3bc092847655dfbdc3884affb07366467799c12776d096326709cf20d6cb8750145bc90c0  vpp-24.06.tar.gz
+1e3ef0cab93c3725e1e7a4a189bc5d72b1451f4b38b1c91b7c07abe2dde0f8a007f70eb74d18e7c36b0e65f5b3821a59da9f82817eede9345899fab0b095cea6  code-portability.patch
+ee14388bc80e28b044e58bf38db41799991832e175f0e272f73a781ae53661fd4904827bb3dc0beb6200f18168e69693c631302c5725351a0740072ec0542b3c  dynamic-libs.patch
+460fe60ec37f6d49794b4a14c149f7eb9974756541e56448cc2100083516440a147eee2f5cca09945a2b45f4d687d89bc2ed798dc2e149bcc0f80a0a6d40f808  libunwind.patch
+9c5b9d6e22425dee6efd0655da919169f1a0c1530f978760d93c2955adc58ee7bcfbb6aa5d061f05c3a06f7b3efda4229618a998a10b110a58bcb26e36eab28a  maybe-uninitialized.patch
+3afeae98eace774ec1ec46e478eb0b883b1e69c4f7888af10d460090b3f61a32fcab0d31a72069dc062e972e3f383fe7e9007e7e1872df1b48e269f938f02e1d  musl.patch
+"
